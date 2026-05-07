@@ -14,7 +14,6 @@ Este repositorio contiene un conjunto de **skills** diseñadas para elevar la ca
 
 | Skill | Descripción | Triggers 🚀 |
 | :--- | :--- | :--- |
-| **📦 Node TS Clean Starter** | Scaffolding de backend profesional: Node + TS + Sequelize + Clean Architecture + Docker + Jest. | `create node clean architecture project`, `scaffold backend ts sequelize` |
 | **📝 God README Generator** | Generador de documentación de nivel empresarial con análisis AST, diagramas Mermaid y DTOs. | `god readme`, `documenta pro max`, `enterprise docs full` |
 | **🛡 Snyk Workflow GOD** | Resolución quirúrgica de vulnerabilidades priorizando estabilidad sobre cumplimiento ciego. | `fix snyk workflow`, `clean and fix vulnerabilities` |
 | **🌿 Git Smart Commit** | Ciclo de vida de Git automatizado con mensajes estandarizados (Commitizen) y push seguro. | `git smart flow`, `haz commit y push`, `sube mis cambios` |
@@ -26,19 +25,16 @@ Este repositorio contiene un conjunto de **skills** diseñadas para elevar la ca
 ```mermaid
 graph TD
     A[Requerimiento del Usuario] --> B{Agente de IA}
-    B --> C[[📦 Scaffold Starter]]
     B --> D[[🌿 Git Smart Flow]]
     B --> E[[🛡 Snyk Workflow]]
     B --> F[[📝 God README]]
 
-    C --> G[Arquitectura Limpia & Robusta]
     D --> H[Historial Atómico & Estándar]
     E --> I[Seguridad en Dependencias]
     F --> J[Documentación de Nivel 1%]
 
     style A fill:#f9f,stroke:#333,stroke-width:2px
     style B fill:#bbf,stroke:#333,stroke-width:2px
-    style G fill:#dfd,stroke:#333,stroke-width:2px
     style H fill:#dfd,stroke:#333,stroke-width:2px
     style I fill:#dfd,stroke:#333,stroke-width:2px
     style J fill:#dfd,stroke:#333,stroke-width:2px
@@ -72,7 +68,6 @@ El agente detectará el archivo `.md` correspondiente en esta carpeta y seguirá
 ```bash
 .
 ├── git-smart-commit-push.md        # Automatización de Git & Commits
-├── node-ts-clean-sequelize-starter.md # Scaffolding de Backend Pro
 ├── snyk-workflow-god.md            # Resolución de vulnerabilidades
 ├── ts-god-readme-generator.md      # Documentación automática Pro
 └── README.md                       # Estás aquí (Índice de la librería)
