@@ -3,11 +3,9 @@ name: node-ts-clean-sequelize-starter
 description: Generate a production-ready Node.js + TypeScript + Express + Sequelize project using clean architecture, including migrations, seeders, testing, linting, docker, env validation, logging, and example endpoint.
 ---
 
-# 🚀 Node TS Clean Architecture + Sequelize (SR Skill)
+# Node TS Clean Architecture + Sequelize
 
-## 🎯 Goal
-
-Scaffold a **production-ready backend** with:
+Generate a **production-ready backend** with:
 
 - Node + TypeScript + Express
 - Sequelize ORM (migrations + seeders)
@@ -21,9 +19,9 @@ Scaffold a **production-ready backend** with:
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
-``` id="3g7b5o"
+```
 src/
   config/
   infrastructure/
@@ -45,17 +43,14 @@ src/
 tests/
   unit/
   integration/
-### ⚙️ Init Project
-
-```bash
-npm init -y
-npm install express sequelize sequelize-cli mysql2 joi log4js dotenv helmet cors
-npm install -D typescript ts-node tsconfig-paths jest ts-jest @types/jest @types/node @types/express @types/cors eslint typescript-eslint prettier
 ```
 
-### ⚙️ TS Config (aliases)
+## Core Components
 
-**`tsconfig.json`**
+### TS Config (aliases)
+
+**`tsconfig.json`** with path aliases for clean imports:
+
 ```json
 {
   "compilerOptions": {
@@ -73,7 +68,75 @@ npm install -D typescript ts-node tsconfig-paths jest ts-jest @types/jest @types
 }
 ```
 
-### 📦 package.json scripts
+### Sequelize Setup
+
+**`.sequelizerc`** (Root folder configuration) points to the database configuration and migration paths.
+
+**`src/infrastructure/database/database.js`** handles environment-specific database configuration.
+
+**`src/infrastructure/database/sequelize.ts`** creates the application connection with Sequelize.
+
+### Clean Architecture Layers
+
+**Domain Entity:** Core business logic (interfaces/types)
+
+**Use Case:** Application business logic
+
+**Model (Sequelize TS):** ORM representation
+
+**Repository:** Data access abstraction
+
+**Controller:** HTTP request/response handling
+
+**Route:** Express route definitions
+
+### Configuration
+
+**ENV + Config + Joi** for environment validation:
+
+- `.env.example` with required variables
+- `src/config/index.ts` with Joi schema validation
+
+### Logging (log4js)
+
+Structured logging with timestamps and log levels.
+
+### Error Handler
+
+Global error handler middleware for Express.
+
+### Testing (Jest)
+
+**jest.config.js** configured with TypeScript support via ts-jest.
+
+### Linting
+
+**ESLint (eslint.config.mjs)** with TypeScript rules and **Prettier** for code formatting.
+
+### Docker
+
+Dockerfile for containerization and docker-compose.yml for local development.
+
+---
+
+## When to use this skill
+
+- Use this when you need to scaffold a new production-ready Node.js backend
+- This is helpful for projects requiring clean architecture with TypeScript
+- Use this to generate a complete starter with all enterprise patterns included
+- This is ideal for teams that need database migrations, seeders, and comprehensive testing setup
+
+## How to use it
+
+### Init Project
+
+```bash
+npm init -y
+npm install express sequelize sequelize-cli mysql2 joi log4js dotenv helmet cors
+npm install -D typescript ts-node tsconfig-paths jest ts-jest @types/jest @types/node @types/express @types/cors eslint typescript-eslint prettier
+```
+
+### Package.json Scripts
 
 ```json
 {
@@ -81,7 +144,6 @@ npm install -D typescript ts-node tsconfig-paths jest ts-jest @types/jest @types
     "dev": "ts-node -r tsconfig-paths/register src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-
     "new:migration": "npx sequelize-cli migration:generate --name",
     "new:seeder": "npx sequelize-cli seed:generate --name",
     "migrate": "npx sequelize-cli db:migrate",
@@ -94,275 +156,22 @@ npm install -D typescript ts-node tsconfig-paths jest ts-jest @types/jest @types
 }
 ```
 
-### 🗂 Sequelize Setup
+### Sequelize Initialization
 
-**`.sequelizerc`** (Root folder configuration)
-```javascript
-const path = require('path');
-
-module.exports = {
-  'config': path.resolve('src', 'infrastructure', 'database', 'database.js'),
-  'models-path': path.resolve('src', 'infrastructure', 'database', 'models'),
-  'seeders-path': path.resolve('src', 'infrastructure', 'database', 'seeders'),
-  'migrations-path': path.resolve('src', 'infrastructure', 'database', 'migrations')
-};
-```
-
-**`src/infrastructure/database/database.js`** (For CLI usage)
-```javascript
-require('dotenv').config();
-
-module.exports = {
-  development: {
-    username: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-    host: process.env.DB_HOST,
-    dialect: 'mysql'
-  },
-  production: {
-    // production config...
-  }
-};
-```
-
-**`src/infrastructure/database/sequelize.ts`** (Application connection)
-```typescript
-import { Sequelize } from 'sequelize';
-import { config } from '@/config';
-
-export const sequelize = new Sequelize(
-  config.DATABASE.DB_NAME,
-  config.DATABASE.DB_USER,
-  config.DATABASE.DB_PASS,
-  {
-    host: config.DATABASE.DB_HOST,
-    dialect: 'mysql',
-    logging: false,
-  }
-);
-```
-
-Run initialization (if not creating folders manually):
 ```bash
 npx sequelize-cli init
 ```
 
-#### Example Migration (`src/infrastructure/database/migrations/...`)
+Create example migration and seeder files in respective directories.
 
-```javascript
-'use strict';
+### App Initialization
 
-module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('users', {
-      id: { type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true },
-      name: Sequelize.STRING,
-      createdAt: Sequelize.DATE,
-      updatedAt: Sequelize.DATE
-    });
-  },
-  async down(queryInterface) {
-    await queryInterface.dropTable('users');
-  }
-};
-```
-
-#### Example Seeder (`src/infrastructure/database/seeders/...`)
-
-```javascript
-'use strict';
-
-module.exports = {
-  async up(queryInterface) {
-    await queryInterface.bulkInsert('users', [
-      { name: 'Ivan', createdAt: new Date(), updatedAt: new Date() }
-    ]);
-  },
-  async down(queryInterface) {
-    await queryInterface.bulkDelete('users', null, {});
-  }
-};
-```
-
-### 🔐 ENV + Config + Joi
-
-**.env.example**
-```env
-PORT=3000
-DB_HOST=localhost
-DB_USER=root
-DB_PASS=password
-DB_NAME=test
-NODE_ENV=development
-```
-
-**`src/config/index.ts`**
-```typescript
-import Joi from 'joi';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-export interface EnvConfig {
-  ENV: string;
-  PORT: number;
-  DATABASE: {
-    DB_NAME: string;
-    DB_USER: string;
-    DB_PASS: string;
-    DB_HOST: string;
-  };
-}
-
-const schema = Joi.object({
-  NODE_ENV: Joi.string().valid('development', 'production').default('development'),
-  PORT: Joi.number().default(3000),
-  DB_NAME: Joi.string().default('test'),
-  DB_USER: Joi.string().default('root'),
-  DB_PASS: Joi.string().default('password'),
-  DB_HOST: Joi.string().default('localhost')
-})
-  .unknown()
-  .required();
-
-const { error, value: envVars } = schema.validate(process.env, {
-  abortEarly: false,
-  convert: true
-});
-
-if (error) {
-  throw new Error(`Error en la configuración de las variables de entorno: \n${error.message}`);
-}
-
-export const config: EnvConfig = {
-  ENV: envVars.NODE_ENV,
-  PORT: envVars.PORT,
-  DATABASE: {
-    DB_NAME: envVars.DB_NAME,
-    DB_USER: envVars.DB_USER,
-    DB_PASS: envVars.DB_PASS,
-    DB_HOST: envVars.DB_HOST
-  }
-};
-```
-
-### 🪵 Logger (log4js)
-
-```typescript
-import { configure, getLogger } from 'log4js';
-
-configure({
-  appenders: {
-    stdout: {
-      type: 'stdout',
-      layout: {
-        type: 'pattern',
-        pattern: '%[[%x{time}] - [%p] | %m %]',
-        tokens: {
-          time: () => new Date().toLocaleString('es-MX', { hour12: false })
-        }
-      }
-    }
-  },
-  categories: { default: { appenders: ['stdout'], level: 'debug' } }
-});
-
-export const logger = getLogger();
-```
-
-### 🧠 Clean Architecture Example
-
-#### Domain Entity
-
-```typescript
-export interface User {
-  id: number;
-  name: string;
-}
-```
-
-#### Use Case
-
-```typescript
-export class GetUsers {
-  constructor(private repo: any) {}
-
-  execute() {
-    return this.repo.findAll();
-  }
-}
-```
-
-#### Model (Sequelize TS)
-
-**`src/infrastructure/database/models/User.ts`**
-```typescript
-import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../sequelize';
-
-export class UserModel extends Model {
-  public id!: number;
-  public name!: string;
-}
-
-UserModel.init(
-  {
-    id: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    name: { type: DataTypes.STRING, allowNull: false },
-  },
-  { sequelize, tableName: 'users' }
-);
-```
-
-#### Repository (Sequelize)
-
-**`src/infrastructure/database/user.repository.ts`**
-```typescript
-import { UserModel } from './models/User';
-
-export class UserRepository {
-  async findAll() {
-    return UserModel.findAll();
-  }
-}
-```
-
-#### Controller
-
-```typescript
-import { Request, Response } from 'express';
-
-export class UserController {
-  constructor(private useCase: any) {}
-
-  async get(req: Request, res: Response) {
-    const data = await this.useCase.execute();
-    res.json({ success: true, data });
-  }
-}
-```
-
-#### Route
-
-```typescript
-import { Router } from 'express';
-
-export const userRoutes = (controller: any) => {
-  const router = Router();
-  router.get('/users', controller.get.bind(controller));
-  return router;
-};
-```
-
-### 🌐 App Init
+Create express app with middleware (helmet, cors), health check endpoint, and error handler:
 
 ```typescript
 import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
-import { config } from '@/config';
-import { userRoutes } from '@/interfaces/routes/user.routes';
 
 const app = express();
 
@@ -371,91 +180,10 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/health', (_, res) => res.send('OK'));
-
-app.use(userRoutes(/* inject controller */));
-
 app.listen(config.PORT);
 ```
 
-### ❌ Error Handler
-
-```typescript
-import { Request, Response, NextFunction } from 'express';
-
-export const errorHandler = (err: any, req: Request, res: Response, _next: NextFunction) => {
-  res.status(500).json({ success: false, message: err.message });
-};
-```
-
-### 🧪 Jest
-
-**jest.config.js**
-```javascript
-module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node'
-};
-```
-
-### 🎨 ESLint (eslint.config.mjs)
-
-```javascript
-import tseslint from 'typescript-eslint';
-
-export default tseslint.config(
-  ...tseslint.configs.recommended,
-  {
-    files: ['**/*.ts'],
-    rules: {
-      semi: ['error', 'always'],
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
-    }
-  }
-);
-```
-
-### 💅 Prettier
-
-**.prettierrc**
-```json
-{
-  "semi": true,
-  "trailingComma": "all",
-  "singleQuote": true,
-  "printWidth": 120,
-  "tabWidth": 2
-}
-```
-
-### 🐳 Docker
-
-**Dockerfile**
-```dockerfile
-FROM node:20
-WORKDIR /app
-COPY . .
-RUN npm install
-CMD ["npm", "run", "dev"]
-```
-
-**docker-compose.yml**
-```yaml
-version: '3'
-services:
-  app:
-    build: .
-    ports:
-      - "3000:3000"
-```
-
-**.dockerignore**
-```
-node_modules
-dist
-```
-
-### 📁 .gitignore
+### .gitignore Setup
 
 ```
 node_modules
@@ -463,36 +191,17 @@ dist
 .env
 ```
 
-### 📄 README.md
-
-```markdown
-# my-repo
-```
-
-### ✅ Validation Step
+### Validation Step
 
 After executing the skill, validate that the template starts up correctly:
 
-1. Ensure `.env` is created from `.env.example`:
-   ```bash
-   cp .env.example .env
-   ```
-2. Run ESLint:
-   ```bash
-   npm run lint
-   ```
-3. Run the development server:
-   ```bash
-   npm run dev
-   ```
-4. Verify the console outputs that the server is running on port 3000.
+1. Ensure `.env` is created from `.env.example`: `cp .env.example .env`
+2. Run ESLint: `npm run lint`
+3. Run the development server: `npm run dev`
+4. Verify the console outputs that the server is running on port 3000
 
-### 🧠 Activation
+## Activation Triggers
 
-```text
-"create node clean architecture project"
-"scaffold backend ts sequelize"
-"init api pro"
-```
-
----
+- "create node clean architecture project"
+- "scaffold backend ts sequelize"
+- "init api pro"
